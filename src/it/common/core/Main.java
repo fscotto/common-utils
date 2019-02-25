@@ -19,5 +19,8 @@ public class Main {
 		Date d1 = Dates.toDate("1002019", "ddMMyyyy");
 		Date d2 = Dates.toDate("1202019", "ddMMyyyy");
 		System.out.println(Dates.differenceInDays(d1, d2));
+		System.out.println(Dates.toSqlDate(new Date()));
+
+		System.out.println(Dates.addDays(d1, 4));
 	}
 }

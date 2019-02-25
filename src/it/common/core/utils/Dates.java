@@ -57,6 +57,24 @@ public final class Dates {
 		return dayTo - dayFrom;
 	}
 
+	public static Date addDays(Date date, int days) {
+		Calendar cal = toCalendar(date);
+		cal.add(Calendar.DATE, days);
+		return cal.getTime();
+	}
+
+	public static Date addMonths(Date date, int months) {
+		Calendar cal = toCalendar(date);
+		cal.add(Calendar.MONTH, months);
+		return cal.getTime();
+	}
+
+	public static Date addYears(Date date, int years) {
+		Calendar cal = toCalendar(date);
+		cal.add(Calendar.YEAR, years);
+		return cal.getTime();
+	}
+
 	public static long fromMillisecondToSecond(long millisecond) {
 		return millisecond / SECOND_IN_MILLIS;
 	}
@@ -74,7 +92,10 @@ public final class Dates {
 	}
 
 	public static java.sql.Date toSqlDate(Date date) {
-		return (java.sql.Date) date;
+		if (date == null) {
+			return null;
+		}
+		return new java.sql.Date(date.getTime());
 	}
 
 	public static Calendar toCalendar(Date date) {
