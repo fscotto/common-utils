@@ -3,7 +3,9 @@ package it.fscotto.utils;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -18,6 +20,8 @@ public final class Dates {
 	private static final long HOUR_IN_MILLIS = MINUTE_IN_MILLIS * 60;
 	private static final long DAY_IN_MILLIS = HOUR_IN_MILLIS * 24;
 	private static final long WEEK_IN_MILLIS = DAY_IN_MILLIS * 7;
+
+	private Dates() {}
 
 	public static String toString(Date date, String pattern) {
 		DateFormat format = getDateFormatter(pattern);
@@ -51,7 +55,7 @@ public final class Dates {
 		return cal.get(field);
 	}
 
-	public static long differenceInDays(Date from, Date to) {
+	public static long getPeriodInDays(Date from, Date to) {
 		long dayFrom = fromMillisecondToDay(from.getTime());
 		long dayTo = fromMillisecondToDay(to.getTime());
 		return dayTo - dayFrom;
@@ -59,19 +63,37 @@ public final class Dates {
 
 	public static Date addDays(Date date, int days) {
 		Calendar cal = toCalendar(date);
-		cal.add(Calendar.DATE, days);
+		cal.add(Calendar.DATE, Math.abs(days));
 		return cal.getTime();
 	}
 
 	public static Date addMonths(Date date, int months) {
 		Calendar cal = toCalendar(date);
-		cal.add(Calendar.MONTH, months);
+		cal.add(Calendar.MONTH, Math.abs(months));
 		return cal.getTime();
 	}
 
 	public static Date addYears(Date date, int years) {
 		Calendar cal = toCalendar(date);
-		cal.add(Calendar.YEAR, years);
+		cal.add(Calendar.YEAR, Math.abs(years));
+		return cal.getTime();
+	}
+
+	public static Date subDays(Date date, int days) {
+		Calendar cal = toCalendar(date);
+		cal.add(Calendar.DATE, - Math.abs(days));
+		return cal.getTime();
+	}
+
+	public static Date subMonths(Date date, int months) {
+		Calendar cal = toCalendar(date);
+		cal.add(Calendar.MONTH, - Math.abs(months));
+		return cal.getTime();
+	}
+
+	public static Date subYears(Date date, int years) {
+		Calendar cal = toCalendar(date);
+		cal.add(Calendar.YEAR, - Math.abs(years));
 		return cal.getTime();
 	}
 
@@ -92,49 +114,46 @@ public final class Dates {
 	}
 
 	public static Date getEasterDay(int year) {
-		int century = (year / 100); //first 2 digits of year
-		int temp; //intermediate results
-		int tA, tB, tC, tD, tE; //table A to E results
-		int day = 0;
-		int month = 0;
-		int remain19 = year % 19; //remainder of year / 19		// calculate Paschial Full Moon date
-		temp = (century - 15) / 2 + 202 - 11 * remain19;
-		switch (century) {
-			case ((21) | (24) | (25) | (27) | (28) | (29) | (30) | (31) | (32) | (34) | (35) | (38)) :
-				temp = temp - 1;
-			case ((33) | (36) | (37) | (39) | (40)) :
-				temp = temp - 2;
+		int a = 0;
+		int b = 0;
+		int c = 0;
+		int d = 0;
+		int e = 0;
+		int remain19 = year % 19;
+		int century = (year / 100);
+		int temp = (century - 15) / 2 + 202 - 11 * remain19;
+		if (Arrays.asList(21, 24, 25, 27, 28, 29, 30, 31, 32, 35, 38).contains(century)) {
+			temp = temp - 1;
+		} else if (Arrays.asList(33, 36, 37, 39, 40).contains(century)) {
+			temp = temp - 2;
 		}
 		temp = temp % 30;
-		tA = temp + 21;
+		a = temp + 21;
 		if (temp == 29) {
-			tA = tA - 1;
+			a = a - 1;
 		}
 		if ((temp == 28) && (remain19 > 10)) {
-			tA = tA - 1;
-		} //find the next Sunday
-		tB = (tA - 19) % 7;
-		tC = (40 - century) % 4;
-		if (tC == 3) {
-			tC = tC + 1;
+			a = a - 1;
 		}
-		if (tC > 1) {
-			tC = tC + 1;
+		b = (a - 19) % 7;
+		c = (40 - century) % 4;
+		if (c == 3) {
+			c = c + 1;
+		}
+		if (c > 1) {
+			c = c + 1;
 		}
 		temp = year % 100;
-		tD = (temp + temp / 4) % 7;
-		tE = ((20 - tB - tC - tD) % 7) + 1;
-		day = tA + tE; // return the date
-		if (day > 31) {
-			day = day - 31;
-			month = 4;
-		} else {
-			month = 3;
-		}
-		String d = day < 10 ? "0" + day : "" + day;
-		String m = month < 10 ? "0" + month : "" + month;
+		d = (temp + temp / 4) % 7;
+		e = ((20 - b - c - d) % 7) + 1;
+
 		Calendar cal = Calendar.getInstance();
-		cal.set(year, Integer.valueOf(m) - 1, Integer.valueOf(d), 0, 0, 0);
+		int day = a + e;
+		if (day > 31) {
+			cal.set(year, Calendar.APRIL, day - 31, 0, 0, 0);
+		} else {
+			cal.set(year, Calendar.MARCH, day, 0, 0, 0);
+		}
 		return cal.getTime();
 	}
 
@@ -154,4 +173,5 @@ public final class Dates {
 	public static DateFormat getDateFormatter(String pattern) {
 		return new SimpleDateFormat(pattern);
 	}
+
 }
