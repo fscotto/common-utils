@@ -91,6 +91,53 @@ public final class Dates {
 		return millisecond / DAY_IN_MILLIS;
 	}
 
+	public static Date getEasterDay(int year) {
+		int century = (year / 100); //first 2 digits of year
+		int temp; //intermediate results
+		int tA, tB, tC, tD, tE; //table A to E results
+		int day = 0;
+		int month = 0;
+		int remain19 = year % 19; //remainder of year / 19		// calculate Paschial Full Moon date
+		temp = (century - 15) / 2 + 202 - 11 * remain19;
+		switch (century) {
+			case ((21) | (24) | (25) | (27) | (28) | (29) | (30) | (31) | (32) | (34) | (35) | (38)) :
+				temp = temp - 1;
+			case ((33) | (36) | (37) | (39) | (40)) :
+				temp = temp - 2;
+		}
+		temp = temp % 30;
+		tA = temp + 21;
+		if (temp == 29) {
+			tA = tA - 1;
+		}
+		if ((temp == 28) && (remain19 > 10)) {
+			tA = tA - 1;
+		} //find the next Sunday
+		tB = (tA - 19) % 7;
+		tC = (40 - century) % 4;
+		if (tC == 3) {
+			tC = tC + 1;
+		}
+		if (tC > 1) {
+			tC = tC + 1;
+		}
+		temp = year % 100;
+		tD = (temp + temp / 4) % 7;
+		tE = ((20 - tB - tC - tD) % 7) + 1;
+		day = tA + tE; // return the date
+		if (day > 31) {
+			day = day - 31;
+			month = 4;
+		} else {
+			month = 3;
+		}
+		String d = day < 10 ? "0" + day : "" + day;
+		String m = month < 10 ? "0" + month : "" + month;
+		Calendar cal = Calendar.getInstance();
+		cal.set(year, Integer.valueOf(m) - 1, Integer.valueOf(d), 0, 0, 0);
+		return cal.getTime();
+	}
+
 	public static java.sql.Date toSqlDate(Date date) {
 		if (date == null) {
 			return null;

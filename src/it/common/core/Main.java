@@ -22,5 +22,6 @@ public class Main {
 		System.out.println(Dates.toSqlDate(new Date()));
 
 		System.out.println(Dates.addDays(d1, 4));
+		System.out.println(Dates.getEasterDay(2019));
 	}
 }
