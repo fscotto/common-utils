@@ -1,6 +1,6 @@
-package it.common.core;
+package it.fscotto;
 
-import it.common.core.utils.Dates;
+import it.fscotto.utils.Dates;
 import java.util.Date;
 
 public class Main {

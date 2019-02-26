@@ -1,4 +1,4 @@
-package it.common.core.utils;
+package it.fscotto.utils;
 
 import java.text.DateFormat;
 import java.text.ParseException;
