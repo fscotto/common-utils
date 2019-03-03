@@ -1,4 +1,4 @@
-package it.common.core.utils;
+package it.fscotto.utils;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
